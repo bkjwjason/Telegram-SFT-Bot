@@ -5,5 +5,4 @@
 > This bot is meant to be hosted on Heroku.
 > I'm certain this bot can be improved a lot more.
 > Feel free to clone it and improve it, I won't be improving it any more due to time constraints.
-> You can create a pull request for me to add it in, if you have any improvements.
 > Sorry if this looks like spaghetti code.
