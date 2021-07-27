@@ -5,5 +5,5 @@
 > This bot is meant to be hosted on Heroku.
 > I'm certain this bot can be improved a lot more. Maybe it can be made neater using inlinekeyboard?
 > There are certain problems that could be improved too. Using an external databse like PostgreSQL or MongoDB? I'll have to look into that further, as I have no experience using those
-> Feel free to clone it and improve it, I won't be improving it any more due to time constraints.
+> 
 
