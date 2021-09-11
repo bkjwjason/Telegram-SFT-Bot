@@ -3,7 +3,7 @@ import gspread
 import os
 import pytz
 import telegram
-from datetime import datetime
+import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, ChatAction
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext)
@@ -31,7 +31,7 @@ sheet = client.open('Record').sheet1
 PORT = int(os.environ.get('PORT', '8443'))
 
 
-my_date = datetime.now(pytz.timezone('Asia/Singapore')).strftime('%d/%m/%Y')
+my_date = datetime.datetime.now(pytz.timezone('Asia/Singapore')).strftime('%d/%m/%Y')
 
 #FlowChart: SIGN_IN --> CHECKHEALTH --> RANKNAME1 --> RANKNAME2 --> SUBUNIT --> ACTIVITY --> GET_TIME --> CONFIRMATION (IF NON SPORTS AND GAMES) --> SUBMIT --> SIGNOUT
 #           SIGN_IN --> CHECKHEALTH --> RANKNAME1 --> RANKNAME2 --> SUBUNIT --> ACTIVITY --> GET_TIME(IF SPORTS, CHOOSE WHICH SPORT) --> SPORTSCONFIRMATION --> CONFIRMATION (IF NON SPORTS AND GAMES) --> SUBMIT --> SIGNOUT
@@ -73,7 +73,7 @@ def start(update: Update, _: CallbackContext):
         morning_end = '09:00'
         night_start = '19:00'
         night_end = '22:00'
-        now = datetime.now(pytz.timezone('UTC'))
+        now = datetime.datetime.now(pytz.timezone('UTC'))
         singapore_time = now.astimezone(pytz.timezone('Asia/Singapore'))
         check_in_time = singapore_time.strftime("%H:%M")
         if (check_in_time >= morning_start and check_in_time <= morning_end):
@@ -145,6 +145,8 @@ def check_health(update: Update, _: CallbackContext):
         update.message.reply_text(
             'Sign In cancelled, Have a nice day!'
         )
+        userID = str(update.message.chat_id)
+        userID_database.pop(userID,None)
         return ConversationHandler.END
 
     
@@ -270,7 +272,7 @@ def confirmation(update: Update, _: CallbackContext):
     if (str(update.message.text) >= morning_start and str(update.message.text) <= morning_end):
         #shows the user all of the data that was submitted, to check before submitting
         userID = str(update.message.chat_id)
-        now = datetime.now(pytz.timezone('UTC'))
+        now = datetime.datetime.now(pytz.timezone('UTC'))
         singapore_time = now.astimezone(pytz.timezone('Asia/Singapore'))
         time_start = singapore_time.strftime("%H:%M")
         userID_database[userID].append(time_start)
@@ -319,10 +321,11 @@ def confirmation(update: Update, _: CallbackContext):
         )
 
 @send_typing_action
-def submit(update: Update, _: CallbackContext):
+def submit(update: Update, context: CallbackContext):
     #if data is correct --> Yes, then data will be uploaded onto excel
     if update.message.text == 'Yes' or update.message.text == 'yes':
         print(userID_database)
+        global userID
         userID = str(update.message.chat_id)
         # Program to add to GOOGLE SHEETS HERE!
         Date = userID_database[userID][0]
@@ -391,7 +394,13 @@ def submit(update: Update, _: CallbackContext):
                                                         'Sign in Time: ' + Time_start + '\n'
                                                         'Expected Sign out Time: ' + Expected_out
                                                         ) )
-
+        # If User does not sign out by end of SFT Timing, Bot will send scheduled message
+        # Morning SFT Timing
+        t1 = datetime.time(9,00, tzinfo = pytz.timezone('Asia/Singapore'))
+        context.job_queue.run_daily(notification, t1, days=(0,1,2,3,4,5,6))
+        # Night SFT Timing
+        t2 = datetime.time(22,00, tzinfo = pytz.timezone('Asia/Singapore'))
+        context.job_queue.run_daily(notification, t2, days=(0,1,2,3,4,5,6))
         return ConversationHandler.END
 
     #if data is not correct --> No, then user will be prompted to restart the form
@@ -402,6 +411,12 @@ def submit(update: Update, _: CallbackContext):
         userID = str(update.message.chat_id)
         userID_database.pop(userID,None)
         return ConversationHandler.END
+
+# Reminder Message to user
+def notification(context: CallbackContext):
+    if userID in userID_database:
+        context.bot.send_message(int(userID), text = "Hi there, it seems like you have forgotten to sign out. Please sign out, and remind your buddy to sign out as well. Thank you!")
+
 
 @send_typing_action
 def check_end(update: Update, _: CallbackContext):
@@ -415,7 +430,7 @@ def check_end(update: Update, _: CallbackContext):
     else:
         reply_keyboard = [['Yes', 'No']]
         # Checks with user if he really wants to sign out
-        now = datetime.now(pytz.timezone('UTC'))
+        now = datetime.datetime.now(pytz.timezone('UTC'))
         singapore_time = now.astimezone(pytz.timezone('Asia/Singapore'))
         time_end = singapore_time.strftime("%H:%M")
         update.message.reply_text(
@@ -429,7 +444,7 @@ def sign_out(update: Update, _: CallbackContext):
     if update.message.text == 'Yes' or update.message.text == 'yes':
         # PROGRAM TO ADD SIGN OUT TIME TO GOOGLE SHEETS GO HERE
         userID = str(update.message.chat_id)
-        now = datetime.now(pytz.timezone('UTC'))
+        now = datetime.datetime.now(pytz.timezone('UTC'))
         singapore_time = now.astimezone(pytz.timezone('Asia/Singapore'))
         time_end = singapore_time.strftime("%H:%M")
         userID_database[userID].append(time_end)
