@@ -228,7 +228,7 @@ def activity(update: Update, _: CallbackContext):
 @send_typing_action
 def get_time(update: Update, _: CallbackContext):
     userID = str(update.message.chat_id)
-    # IF User chose SPORTS, CHECK WHICH SPORT YOU WANT TO PLAY
+    # IF User chose sports, check which sport you want to play
     if update.message.text == '4':
         reply_keyboard = [['1','2','3','4','5','6']]
         update.message.reply_text(
@@ -255,7 +255,7 @@ def get_time(update: Update, _: CallbackContext):
 
 @send_typing_action
 def sports_confirmation(update: Update, _: CallbackContext):
-    #If user chose "4", after getting the specific sport, asks for time
+    #If user chose "4", after getting the specific sport, asks for time, for safety tracking purposes
     userID = str(update.message.chat_id)
     userID_database[userID].append(sports_dict[update.message.text])
     update.message.reply_text('What is your expected Sign Out Time? \n \n'
@@ -270,7 +270,7 @@ def confirmation(update: Update, _: CallbackContext):
     night_start = '19:00'
     night_end = '22:00'
     if (str(update.message.text) >= morning_start and str(update.message.text) <= morning_end):
-        #shows the user all of the data that was submitted, to check before submitting
+        #shows the user all of the data that was submitted, to check before submitting onto excel sheet 
         userID = str(update.message.chat_id)
         now = datetime.datetime.now(pytz.timezone('UTC'))
         singapore_time = now.astimezone(pytz.timezone('Asia/Singapore'))
@@ -293,7 +293,7 @@ def confirmation(update: Update, _: CallbackContext):
                 )
         return SUBMIT
     elif (str(update.message.text) >= night_start and str(update.message.text) <= night_end):
-        #shows the user all of the data that was submitted, to check before submitting
+        #shows the user all of the data that was submitted, to check before submitting onto excel sheet
         userID = str(update.message.chat_id)
         now = datetime.now(pytz.timezone('UTC'))
         singapore_time = now.astimezone(pytz.timezone('Asia/Singapore'))
@@ -327,7 +327,7 @@ def submit(update: Update, context: CallbackContext):
         print(userID_database)
         global userID
         userID = str(update.message.chat_id)
-        # Program to add to GOOGLE SHEETS HERE!
+        # Program to add to GOOGLE SHEETS HERE! 
         Date = userID_database[userID][0]
         Person1 = userID_database[userID][1]
         Person2 = userID_database[userID][2]
@@ -353,7 +353,7 @@ def submit(update: Update, context: CallbackContext):
             'Stay Safe & have a great workout! \n\n'
             '<b>Enter /end to sign out from SRT</b>', parse_mode= 'HTML', reply_markup=ReplyKeyboardRemove()
         )
-        #Sends sign in notification to respective subunit channels
+        #Sends sign in notification to respective subunit channels on telegram
         if SubUnit == 'BNHQ':
             bot.sendMessage(chat_id = -1001111111111, text = (
                                                         '🏃New Sign In Entry🏃' + '\n\n'
@@ -412,7 +412,7 @@ def submit(update: Update, context: CallbackContext):
         userID_database.pop(userID,None)
         return ConversationHandler.END
 
-# Reminder Message to user
+# Reminder Message to user if he has not signed out by end of SFT.
 def notification(context: CallbackContext):
     if userID in userID_database:
         context.bot.send_message(int(userID), text = "Hi there, it seems like you have forgotten to sign out. Please sign out, and remind your buddy to sign out as well. Thank you!")
@@ -461,7 +461,7 @@ def sign_out(update: Update, _: CallbackContext):
         update.message.reply_text(
             'Sign out completed, have a nice day!\n',reply_markup=ReplyKeyboardRemove()
         )
-        #sends sign out notification to respective subunit channels
+        #sends sign out notification to respective subunit channels on telegram
         if SubUnit == 'BNHQ':
             bot.sendMessage(chat_id = -1001111111111, text = (
                                                         '😴New Sign Out Entry😴' + '\n\n'
@@ -516,7 +516,7 @@ def sign_out(update: Update, _: CallbackContext):
 
 @send_typing_action
 def correct_format(update: Update, _: CallbackContext):
-    #for any errors in submission, Bot will send this to user.
+    #for any errors in submission format, Bot will send this to user.
     update.message.delete()
     update.message.reply_text(
         'It seems like there was an error. \n'
