@@ -9,7 +9,7 @@
 
 > This was made using Python and a few external libraries such as python-telegram-bot, sheets API (gspread).
 > 
-> This bot is hosted on Heroku. I'm sure it can be improved further using an external DB like Mongo, unfortunately Heroku does not offer the option for free tier.
+> This bot is hosted on Heroku. I'm sure it can be improved further using a real external DB like Mongo, unfortunately Heroku does not offer the option for free tier. I'll have to make do with a dictionary instead. 
 
 > 
 
