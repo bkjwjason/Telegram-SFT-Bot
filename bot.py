@@ -295,7 +295,7 @@ def confirmation(update: Update, _: CallbackContext):
     elif (str(update.message.text) >= night_start and str(update.message.text) <= night_end):
         #shows the user all of the data that was submitted, to check before submitting onto excel sheet
         userID = str(update.message.chat_id)
-        now = datetime.now(pytz.timezone('UTC'))
+        now = datetime.datetime.now(pytz.timezone('UTC'))
         singapore_time = now.astimezone(pytz.timezone('Asia/Singapore'))
         time_start = singapore_time.strftime("%H:%M")
         userID_database[userID].append(time_start)
