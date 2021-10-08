@@ -13,5 +13,5 @@
 > 
 > Still working on some minor improvements, such as creating a new worksheet whenever it's a new month for simpler tracking purposes, and deleting older worksheets every few months as well. Looking into this by using Google Apps Script, or maybe a cron-job executing a python file every month. Still rather unsure of the process.
 
-> Apologies in advance for the spaghetti code 😬, do feel free to clone this repository and make your own edits and improvements to it. Thank you!
+> Apologies in advance for the spaghetti code 😬, do feel free to clone/fork this repository and make your own edits and improvements to it. Do create a pull request if you can make further improvements. Thank you!
 
