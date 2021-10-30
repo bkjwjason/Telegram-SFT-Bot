@@ -4,7 +4,7 @@ I made a simple Telegram Bot to sign in and out for SFT on Google Sheets. Basica
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install other libraries. Only required if you are going to run the bot locally.
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install other libraries. Only required if you are going to run the bot locally, as the bot is meant to be run on [Heroku](https://www.heroku.com/)
 
 ```bash
 pip install gspread
