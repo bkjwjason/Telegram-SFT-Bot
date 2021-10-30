@@ -34,4 +34,6 @@ webhook_url= 'https://yourwebappname.herokuapp.com/'
 
 Pull requests are welcome. Please create a pull request if you would like to improve any portion of the code or add new features, and I will update it accordingly. Thank you!
 
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
 
